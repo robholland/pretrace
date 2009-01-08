@@ -1,0 +1,55 @@
+.TH pretrace 8 "December 12, 2005" "version 0.3"
+.SH NAME
+pretrace \- always run certain executables under a debugging environment
+.SH DESCRIPTION
+pretrace is a preload library which intercepts the running of executables at loading time and can adjust the environment so that they are run under a debugger, such as strace(1). pretrace is designed to make tracing and debugging applications that may not be easily accessible simpler, for example, debugging apache without having to edit the startup scripts in any way. It also aids in passive auditing by allowing a configurable percentange of calls to be traced, but the others left untouched.
+
+.SH USAGE
+In order to use pretrace, the dynamic loader must be configured to use it by adding the full path to libpretrace to the preload configuration file,
+.I /etc/ld.so.preload.
+The format of this configuration file is described in ld.so(8).
+
+.SH CONFIGURATION
+The configuration file,
+.I /etc/pretrace.conf
+, should have one application per line, followed by an optional percentage and a debugger command.
+.PP
+.B /path/to/application[%percent][:/path/to/debugger [arg1] [...]]
+.PP
+The percentage is optional, and specifies what percentage of invocations will be traced. If not specified, the default is %100, or all invocations. The application may be followed by a colon and debugger command under which the executable will be launched.
+.PP
+For performance reasons, pretrace will not parse the configuration file on every invocation, but memory map the machine readable version generated when executing ptgenmap(1). For this reason you must execute ptgenmap for changes to the configuration file to take effect.
+
+.SH EXAMPLES
+.PP
+.B /bin/ls:/usr/bin/strace -f -efile -o/home/user/ls.logfile
+.PP
+Always execute /bin/ls under the strace debugging utility, saving the output to /home/user/ls.logfile. strace will follow forks, and only log information about file related system calls.
+.PP
+.B /usr/bin/fetchmail:/usr/bin/ltrace -f
+.PP
+Always execute fetchmail under the ltrace debugging facility, following forks. ltrace will print it's output to standard error.
+.PP
+.B /usr/bin/xcalc%75:/usr/bin/valgrind --tool=memcheck --trace-children=yes --log-file=xcalc
+.PP
+75% of the invocations of xcalc will be traced under the valgrind memory debugger.
+.PP
+.B /usr/bin/xterm
+.PP
+All invocations of xterm will be logged using the default debugger, set at compile time.
+
+.SH EXIT STATUS
+pretrace should execute transparently. In the event of an error pretrace will attempt to cleanly hand control over to the application. A debugging message may be printed to standard error.
+
+.SH FILES
+.B /etc/pretrace.conf
+\- configuration file for libpretrace.
+.PP
+.B /etc/pretrace.map
+\- machine readable configuration file, as created by ptgenmap.
+.SH AUTHOR
+Tavis Ormandy <taviso@gentoo.org> and Rob Holland <rob@inversepath.com>
+.SH SEE ALSO
+ptgenmap(1)
+strace(1)
+ld.so(8)

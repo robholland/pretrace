@@ -1,0 +1,25 @@
+.TH ptgenmap 8 "December 12, 2005" "version 0.3"
+.SH NAME
+ptgenmap \- generate map file for libpretrace
+.SH SYNOPSIS
+.B ptgenmap
+.SH DESCRIPTION
+ptgenmap is used to parse the libpretrace configuration file, 
+.I /etc/pretrace.conf
+, and generate the corresponding map file. ptgenmap must be executed after modifying the libpretrace configuration file for changes to take effect.
+.SH TECHNICAL DETAILS
+ptgenmap parses the libpretrace configuration file and writes a state file to
+.I /etc/pretrace.map
+which is used by libpretrace on initialisation. This allows libpretrace to associate name/value pairs very quickly.
+.SH EXIT STATUS
+ptgenmap returns zero on success, and non zero on error.
+.SH FILES
+.B /etc/pretrace.conf
+\- configuration file for libpretrace.
+.PP
+.B /etc/pretrace.map
+\- machine readable configuration file, as created by ptgenmap.
+.SH AUTHOR
+Tavis Ormandy <taviso@gentoo.org> and Rob Holland <rob@inversepath.com>
+.SH SEE ALSO
+pretrace(3)

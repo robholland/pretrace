@@ -1,0 +1,9 @@
+# example pretrace configuration file
+#       /etc/pretrace.conf
+
+# /full/path/to/app[%percent]:[/full/path/to/debugger [arg1 arg2 ...]]
+
+/bin/ls:/usr/bin/strace -f -efile -o/home/user/ls.logfile
+/usr/bin/fetchmail:/usr/bin/ltrace -f
+/usr/bin/xcalc%75:/usr/bin/valgrind --tool=memcheck --trace-children=yes --log-file=xcalc
+/usr/bin/xterm
